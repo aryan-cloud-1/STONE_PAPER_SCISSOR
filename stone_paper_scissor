@@ -1,0 +1,115 @@
+import random
+
+
+MOVES = ["Stone", "Paper", "Scissor"]
+
+
+def show_menu():
+    print("\n1 -> Stone")
+    print("2 -> Paper")
+    print("3 -> Scissor")
+    print("4 -> Exit")
+
+
+def parse_user_choice(raw_choice):
+    normalized = raw_choice.strip().lower()
+    mapping = {
+        "1": "Stone",
+        "2": "Paper",
+        "3": "Scissor",
+        "4": "Exit",
+        "stone": "Stone",
+        "paper": "Paper",
+        "scissor": "Scissor",
+        "scissors": "Scissor",
+        "exit": "Exit",
+        "quit": "Exit",
+    }
+    return mapping.get(normalized)
+
+
+def decide_winner(user_move, computer_move):
+    if user_move == computer_move:
+        return "draw"
+
+    winning_map = {
+        "Stone": "Scissor",
+        "Paper": "Stone",
+        "Scissor": "Paper",
+    }
+
+    if winning_map[user_move] == computer_move:
+        return "user"
+    return "computer"
+
+
+def choose_target_wins():
+    while True:
+        raw = input("Target wins to end match (press Enter for endless): ").strip()
+        if raw == "":
+            return None
+        if not raw.isdigit():
+            print("Please enter a positive number or press Enter.")
+            continue
+
+        wins = int(raw)
+        if wins <= 0:
+            print("Please enter a number greater than 0.")
+            continue
+        return wins
+
+
+def play_game():
+    user_wins = 0
+    computer_wins = 0
+    draws = 0
+
+    target_wins = choose_target_wins()
+
+    while True:
+        show_menu()
+        user_input = input("Enter your choice: ")
+        user_move = parse_user_choice(user_input)
+
+        if user_move is None:
+            print("Invalid input. Please try again.")
+            continue
+
+        if user_move == "Exit":
+            break
+
+        computer_move = random.choice(MOVES)
+        print(f"Computer chose: {computer_move}")
+
+        result = decide_winner(user_move, computer_move)
+        if result == "draw":
+            draws += 1
+            print("Draw!")
+        elif result == "user":
+            user_wins += 1
+            print("YOU WIN!")
+        else:
+            computer_wins += 1
+            print("Computer Wins!")
+
+        print(f"Score -> You: {user_wins} | Computer: {computer_wins} | Draws: {draws}")
+
+        if target_wins is not None and (user_wins >= target_wins or computer_wins >= target_wins):
+            if user_wins > computer_wins:
+                print("\nMatch complete: You won the match!")
+            else:
+                print("\nMatch complete: Computer won the match!")
+            break
+
+    print("\nThanks for playing!")
+    print(f"Final Score -> You: {user_wins} | Computer: {computer_wins} | Draws: {draws}")
+
+
+if __name__ == "__main__":
+    while True:
+        play_game()
+        again = input("\nPlay again? (y/n): ").strip().lower()
+        if again not in ("y", "yes"):
+            print("Goodbye!")
+            break
+    
